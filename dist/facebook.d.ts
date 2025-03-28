@@ -36,6 +36,7 @@ export interface FacebookOptions {
      * @example 720
      */
     height: number;
+    showText: boolean;
 }
 type SetFacebookVideoOptions = {
     src: string;

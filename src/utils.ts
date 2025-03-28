@@ -77,6 +77,16 @@ export interface GetEmbedVimeoUrlOptions {
   title?: boolean;
 }
 
+export interface GetEmbedFacebookUrlOptions {
+  url: string;
+
+  showText?: boolean;
+
+  width?: number;
+
+  height?: number;
+}
+
 export const getYoutubeEmbedUrl = (nocookie?: boolean) => {
   return nocookie ? 'https://www.youtube-nocookie.com/embed/' : 'https://www.youtube.com/embed/'
 }
@@ -290,9 +300,8 @@ export const getEmbedUrlFromVimeoUrl = (options: GetEmbedVimeoUrlOptions) => {
   return outputUrl
 }
 
-export const getEmbedUrlFromFacebookUrl = (options: GetEmbedUrlOptions) => {
-  const { url } = options
-  const showText = 0;
+export const getEmbedUrlFromFacebookUrl = (options: GetEmbedFacebookUrlOptions) => {
+  const { url, showText, width, height } = options
 
   if (!isValidFacebookUrl(url)) return null;
 
@@ -302,8 +311,15 @@ export const getEmbedUrlFromFacebookUrl = (options: GetEmbedUrlOptions) => {
 
   params.push(`href=${encodeURIComponent(url)}`)
 
-  if (showText) {
-    params.push(`show_text=${showText}`)
+  if (!showText) {
+    params.push(`show_text=0`)
+  }
+
+  if(width) {
+    params.push(`width=${width}`)
+  }
+  if(height) {
+    params.push(`height=${height}`)
   }
 
   if (params.length) {

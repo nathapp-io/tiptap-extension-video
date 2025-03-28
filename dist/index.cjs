@@ -160,12 +160,21 @@ const getEmbedUrlFromVimeoUrl = (options) => {
     return outputUrl;
 };
 const getEmbedUrlFromFacebookUrl = (options) => {
-    const { url } = options;
+    const { url, width, height } = options;
     if (!isValidFacebookUrl(url))
         return null;
     const outputUrl = 'https://www.facebook.com/plugins/video.php';
     const params = [];
     params.push(`href=${encodeURIComponent(url)}`);
+    {
+        params.push(`show_text=0`);
+    }
+    if (width) {
+        params.push(`width=${width}`);
+    }
+    if (height) {
+        params.push(`height=${height}`);
+    }
     if (params.length) {
         return `${outputUrl}?${params.join('&')}`;
     }
@@ -548,6 +557,7 @@ const Facebook = core.Node.create({
             HTMLAttributes: {},
             width: 640,
             height: 480,
+            showText: false,
             inline: false,
         };
     },
@@ -587,7 +597,8 @@ const Facebook = core.Node.create({
     renderHTML({ HTMLAttributes }) {
         const embedUrl = getEmbedUrlFromFacebookUrl({
             url: HTMLAttributes.src,
-        });
+            width: this.options.width,
+            height: this.options.height});
         HTMLAttributes.src = embedUrl;
         return [
             'div',
@@ -598,9 +609,6 @@ const Facebook = core.Node.create({
                 'iframe',
                 core.mergeAttributes(this.options.HTMLAttributes, {
                     src: embedUrl,
-                    frameborder: '0',
-                    width: this.options.width,
-                    height: this.options.height,
                 }, HTMLAttributes),
             ],
         ];

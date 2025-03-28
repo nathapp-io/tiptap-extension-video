@@ -44,6 +44,8 @@ export interface FacebookOptions {
    * @example 720
    */
   height: number;
+
+  showText: boolean;
 }
 
 type SetFacebookVideoOptions = { src: string; width?: number; height?: number };
@@ -70,6 +72,7 @@ export const Facebook = Node.create<FacebookOptions>({
       HTMLAttributes: {},
       width: 640,
       height: 480,
+      showText: false,
       inline: false,
     };
   },
@@ -116,6 +119,9 @@ export const Facebook = Node.create<FacebookOptions>({
   renderHTML({ HTMLAttributes }) {
     const embedUrl = getEmbedUrlFromFacebookUrl({
       url: HTMLAttributes.src,
+      width: this.options.width,
+      height: this.options.height,
+      showText: false,
     });
 
     HTMLAttributes.src = embedUrl;
@@ -131,9 +137,6 @@ export const Facebook = Node.create<FacebookOptions>({
           this.options.HTMLAttributes,
           {
             src: embedUrl,
-            frameborder: '0',
-            width: this.options.width,
-            height: this.options.height,
           },
           HTMLAttributes
         ),

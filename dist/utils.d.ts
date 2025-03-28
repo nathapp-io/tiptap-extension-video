@@ -57,8 +57,14 @@ export interface GetEmbedVimeoUrlOptions {
     portrait?: boolean;
     title?: boolean;
 }
+export interface GetEmbedFacebookUrlOptions {
+    url: string;
+    showText?: boolean;
+    width?: number;
+    height?: number;
+}
 export declare const getYoutubeEmbedUrl: (nocookie?: boolean) => "https://www.youtube-nocookie.com/embed/" | "https://www.youtube.com/embed/";
 export declare const getEmbedUrlFromYoutubeUrl: (options: GetEmbedUrlOptions) => string;
 export declare const getEmbedUrlFromVimeoUrl: (options: GetEmbedVimeoUrlOptions) => string;
-export declare const getEmbedUrlFromFacebookUrl: (options: GetEmbedUrlOptions) => string;
+export declare const getEmbedUrlFromFacebookUrl: (options: GetEmbedFacebookUrlOptions) => string;
 export declare const getEmbedUrlFromTiktokUrl: (options: GetEmbedTiktokUrlOptions) => string;

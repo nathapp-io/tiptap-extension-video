@@ -1,7 +1,7 @@
 {
   "name": "@nathapp/tiptap-extension-video",
   "description": "a video embed extension for tiptap",
-  "version": "1.0.0-rc.0",
+  "version": "1.0.0",
   "keywords": [
     "tiptap",
     "tiptap extension",
@@ -37,7 +37,7 @@
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript2": "^0.36.0",
-    "typescript": "^5.7.2" 
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "@tiptap/core": "^2.7.0"
@@ -52,5 +52,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "overrides": {
+    "@rollup/pluginutils": "^5.1.4"
   }  
 }
