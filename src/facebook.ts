@@ -11,11 +11,25 @@ export interface FacebookOptions {
   addPasteHandler: boolean;
 
   /**
+   * Controls if the youtube video should be allowed to go fullscreen.
+   * @default true
+   * @example false
+   */
+  allowFullscreen: boolean;
+
+  /**
    * The HTML attributes for a youtube video node.
    * @default {}
    * @example { class: 'foo' }
    */
   HTMLAttributes: Record<string, any>;
+
+   /**
+   * Controls if the youtube node should be inline or not.
+   * @default false
+   * @example true
+   */
+   inline: boolean;
 
   /**
    * The width of the youtube video.
@@ -51,10 +65,12 @@ export const Facebook = Node.create<FacebookOptions>({
 
   addOptions() {
     return {
+      allowFullscreen: true,
       addPasteHandler: true,
       HTMLAttributes: {},
       width: 640,
       height: 480,
+      inline: false,
     };
   },
 
@@ -108,7 +124,6 @@ export const Facebook = Node.create<FacebookOptions>({
       'div',
       {
         'data-facebook-video': '',
-        style: 'padding:56.25% 0 0 0; position:relative;',
       },
       [
         'iframe',
@@ -119,8 +134,6 @@ export const Facebook = Node.create<FacebookOptions>({
             frameborder: '0',
             width: this.options.width,
             height: this.options.height,
-            allow: 'autoplay; fullscreen; picture-in-picture; clipboard-write',
-            style: 'position:absolute; top:0; left:0; width:100%; height:100%;',
           },
           HTMLAttributes
         ),

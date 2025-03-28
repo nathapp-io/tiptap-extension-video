@@ -10,6 +10,35 @@ export interface TiktokOptions {
    */
   addPasteHandler: boolean;
 
+
+  /**
+   * Controls if the youtube video should be allowed to go fullscreen.
+   * @default true
+   * @example false
+   */
+  allowFullscreen: boolean;
+
+  /**
+   * Controls if the youtube video should autoplay.
+   * @default false
+   * @example true
+   */
+  autoplay: boolean;  
+
+  /**
+   * Controls if the youtube video should loop.
+   * @default false
+   * @example true
+   */
+  loop: boolean;
+
+  /**
+   * Controls if the controls should be shown in the youtube video.
+   * @default true
+   * @example false
+   */
+  controls: boolean;
+
   /**
    * The HTML attributes for a youtube video node.
    * @default {}
@@ -17,19 +46,35 @@ export interface TiktokOptions {
    */
   HTMLAttributes: Record<string, any>;
 
+   /**
+   * Controls if the youtube node should be inline or not.
+   * @default false
+   * @example true
+   */
+   inline: boolean;  
+
   /**
    * The width of the youtube video.
-   * @default 640
    * @example 1280
    */
-  width: number;
+  width?: number;
 
   /**
    * The height of the youtube video.
-   * @default 480
    * @example 720
    */
-  height: number;
+  height?: number;
+
+  rel?: number;
+
+  musicInfo?: boolean;
+
+  nativeContextMenu?: boolean;
+
+  closedCaptions?: boolean;
+
+
+
 }
 
 type SetTiktokVideoOptions = { src: string; width?: number; height?: number };
@@ -53,8 +98,15 @@ export const Tiktok = Node.create<TiktokOptions>({
     return {
       addPasteHandler: true,
       HTMLAttributes: {},
-      width: 640,
-      height: 480,
+      allowFullscreen: true,
+      autoplay: false,
+      loop: false,
+      controls: true,
+      rel: 0,
+      musicInfo: false,
+      nativeContextMenu: false,
+      closedCaptions: false,
+      inline: false,
     };
   },
 
@@ -100,6 +152,14 @@ export const Tiktok = Node.create<TiktokOptions>({
   renderHTML({ HTMLAttributes }) {
     const embedUrl = getEmbedUrlFromTiktokUrl({
       url: HTMLAttributes.src,
+      allowFullscreen: this.options.allowFullscreen,
+      autoplay: this.options.autoplay,
+      loop: this.options.loop,
+      controls: this.options.controls,
+      rel: this.options.rel,
+      musicInfo: this.options.musicInfo,
+      nativeContextMenu: this.options.nativeContextMenu,
+      closedCaptions: this.options.closedCaptions,
     });
 
     HTMLAttributes.src = embedUrl;
@@ -108,7 +168,6 @@ export const Tiktok = Node.create<TiktokOptions>({
       'div',
       {
         'data-tiktok-video': '',
-        style: 'padding:56.25% 0 0 0; position:relative;',
       },
       [
         'iframe',
@@ -116,11 +175,16 @@ export const Tiktok = Node.create<TiktokOptions>({
           this.options.HTMLAttributes,
           {
             src: embedUrl,
-            frameborder: '0',
             width: this.options.width,
             height: this.options.height,
-            allow: 'autoplay; fullscreen; picture-in-picture; clipboard-write',
-            style: 'position:absolute; top:0; left:0; width:100%; height:100%;',
+            allowfullscreen: this.options.allowFullscreen,
+            autoplay: this.options.autoplay,     
+            loop: this.options.loop,
+            controls: this.options.controls,
+            rel: this.options.rel,
+            musicInfo: this.options.musicInfo,
+            nativeContextMenu: this.options.nativeContextMenu,
+            closedCaptions: this.options.closedCaptions,
           },
           HTMLAttributes
         ),

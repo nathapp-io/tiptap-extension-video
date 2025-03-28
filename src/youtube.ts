@@ -68,10 +68,9 @@ export interface YoutubeOptions {
 
   /**
    * The height of the youtube video.
-   * @default 480
    * @example 720
    */
-  height: number;
+  height?: number;
 
   /**
    * The language of the youtube video.
@@ -145,10 +144,9 @@ export interface YoutubeOptions {
 
   /**
    * The width of the youtube video.
-   * @default 640
    * @example 1280
    */
-  width: number;
+  width?: number;
 
   /**
    * Controls if the related youtube videos at the end are from the same channel.
@@ -194,7 +192,7 @@ export const Youtube = Node.create<YoutubeOptions>({
       disableKBcontrols: false,
       enableIFrameApi: false,
       endTime: 0,
-      height: 480,
+      // height: 480,
       interfaceLanguage: undefined,
       ivLoadPolicy: 0,
       loop: false,
@@ -205,7 +203,7 @@ export const Youtube = Node.create<YoutubeOptions>({
       origin: '',
       playlist: '',
       progressBarColor: undefined,
-      width: 640,
+      // width: 640,
       rel: 1,
     }
   },
@@ -229,10 +227,10 @@ export const Youtube = Node.create<YoutubeOptions>({
         default: 0,
       },
       width: {
-        default: this.options.width,
+        default: null,
       },
       height: {
-        default: this.options.height,
+        default: null,
       },
     }
   },

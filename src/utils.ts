@@ -1,8 +1,8 @@
 export const YOUTUBE_REGEX = /^((?:https?:)?\/\/)?((?:www|m|music)\.)?((?:youtube\.com|youtu.be|youtube-nocookie\.com))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/
 export const YOUTUBE_REGEX_GLOBAL = /^((?:https?:)?\/\/)?((?:www|m|music)\.)?((?:youtube\.com|youtu.be|youtube-nocookie\.com))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/g
 
-export const VIMEO_REGEX = /^(https?:\/\/)?(www\.)?(vimeo\.com\/\d+|player\.vimeo\.com\/video\/\d+)(\/?.*)?$/;
-export const VIMEO_REGEX_GLOBAL = /^(https?:\/\/)?(www\.)?(vimeo\.com\/\d+|player\.vimeo\.com\/video\/\d+)(\/?.*)?$/g;
+export const VIMEO_REGEX = /^(https?:\/\/)?(www\.)?(vimeo\.com\/(video\/)?|player\.vimeo\.com\/video\/)(\d+)(\?.*)?$/;
+export const VIMEO_REGEX_GLOBAL = /^(https?:\/\/)?(www\.)?(vimeo\.com\/(video\/)?|player\.vimeo\.com\/video\/)(\d+)(\?.*)?$/g;
 
 export const FACEBOOK_REGEX = /^(https?:\/\/)?(www\.)?facebook\.com\/.+\/(videos|reel)\/\d+/;
 export const FACEBOOK_REGEX_GLOBAL = /^(https?:\/\/)?(www\.)?facebook\.com\/.+\/(videos|reel)\/\d+/g;
@@ -47,6 +47,34 @@ export interface GetEmbedUrlOptions {
   progressBarColor?: string;
   startAt?: number;
   rel?: number;
+}
+
+export interface GetEmbedTiktokUrlOptions {
+  url: string;
+  allowFullscreen?: boolean;
+  autoplay?: boolean;
+  controls?: boolean;
+  loop?: boolean;
+  rel?: number;
+  musicInfo?: boolean;
+  nativeContextMenu?: boolean;
+  closedCaptions?: boolean;
+}
+
+export interface GetEmbedVimeoUrlOptions {
+  url: string;
+  allowFullscreen?: boolean;
+  autoplay?: boolean;
+  controls?: boolean;
+  loop?: boolean;
+  byline?: boolean;
+  closedCaptions?: boolean;
+  endTime?: number;
+  startTime?: number;
+  showLogo?: boolean;
+  responsive?: boolean;
+  portrait?: boolean;
+  title?: boolean;
 }
 
 export const getYoutubeEmbedUrl = (nocookie?: boolean) => {
@@ -181,12 +209,23 @@ export const getEmbedUrlFromYoutubeUrl = (options: GetEmbedUrlOptions) => {
   return outputUrl
 }
 
-export const getEmbedUrlFromVimeoUrl = (options: GetEmbedUrlOptions) => {
+export const getEmbedUrlFromVimeoUrl = (options: GetEmbedVimeoUrlOptions) => {
 
-  const { url } = options
-  const title = 0;
-  const byline = 0;
-  const portrait = 0;
+  const { 
+    url, 
+    allowFullscreen,
+    autoplay,
+    controls,
+    loop,
+    byline,
+    closedCaptions,
+    endTime,
+    startTime,
+    showLogo,
+    responsive,
+    portrait,
+    title
+   } = options
 
   if (!isValidVimeoUrl(url)) return null;
 
@@ -199,14 +238,51 @@ export const getEmbedUrlFromVimeoUrl = (options: GetEmbedUrlOptions) => {
 
   const params: string[] = []
 
-  if (title) {
-    params.push(`title=${title}`)
+  if(!allowFullscreen) {
+    console.log('allowFullscreen', allowFullscreen)
+    params.push(`fullscreen=0`)
   }
-  if (byline) {
-    params.push(`byline=${byline}`)
+
+  if(autoplay) {
+    params.push('autoplay=1')
   }
-  if (portrait) {
-    params.push(`portrait=${portrait}`)
+
+  if (!controls) {
+    params.push('controls=0')
+  }
+
+  if (loop) {
+    params.push('loop=1')
+  }
+
+  if(!closedCaptions) {
+    params.push('cc=0')
+  }
+
+  if (endTime) {
+    params.push(`end_time=${endTime}`)
+  }
+
+  if(startTime) {
+    params.push(`start_time=${startTime}`)
+  }
+
+  if(!showLogo) {
+    params.push(`vimeo_logo=0`)
+  }
+
+  if(responsive) {
+    params.push(`responsive=1`)
+  }
+
+  if (!title) {
+    params.push(`title=0`)
+  }
+  if (!byline) {
+    params.push(`byline=0`)
+  }
+  if (!portrait) {
+    params.push(`portrait=0`)
   }
   if (params.length) {
     return `${outputUrl}?${params.join('&')}`
@@ -236,7 +312,7 @@ export const getEmbedUrlFromFacebookUrl = (options: GetEmbedUrlOptions) => {
   return outputUrl
 }
 
-export const getEmbedUrlFromTiktokUrl = (options: GetEmbedUrlOptions | any) => {
+export const getEmbedUrlFromTiktokUrl = (options: GetEmbedTiktokUrlOptions) => {
   const {
     url,
     allowFullscreen,
@@ -244,6 +320,9 @@ export const getEmbedUrlFromTiktokUrl = (options: GetEmbedUrlOptions | any) => {
     controls,
     loop,
     rel,
+    musicInfo,
+    nativeContextMenu,
+    closedCaptions,
   } = options
 
   if (!isValidTiktokUrl(url)) return null;
@@ -259,22 +338,34 @@ export const getEmbedUrlFromTiktokUrl = (options: GetEmbedUrlOptions | any) => {
   params.push(`url=${encodeURIComponent(url)}`)
 
   if (autoplay) {
-    params.push(`autoplay=${autoplay}`)
+    params.push(`autoplay=1`)
   }
   if (loop) {
-    params.push(`loop=${loop}`)
+    params.push(`loop=1`)
   }
 
-  if(rel) {
+  if (rel !== undefined) {
     params.push(`rel=${rel}`)
   }
 
-  if(allowFullscreen) {
-    params.push(`fullscreen_button=${allowFullscreen}`)
+  if(!allowFullscreen) {
+    params.push(`fullscreen_button=0`)
   }
 
-  if(controls) {
-    params.push(`controls=${controls}`)
+  if(!controls) {
+    params.push(`controls=0`)
+  }
+
+  if(!musicInfo) {
+    params.push(`music_info=0`)
+  }
+
+  if(!nativeContextMenu) {
+    params.push(`native_context_menu=0`)
+  }
+
+  if(!closedCaptions) {
+    params.push(`closed_captions=0`)
   }
 
   if (params.length) {

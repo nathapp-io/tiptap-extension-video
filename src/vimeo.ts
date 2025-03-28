@@ -17,19 +17,58 @@ export interface VimeoOptions {
    */
   HTMLAttributes: Record<string, any>;
 
+   /**
+   * Controls if the youtube node should be inline or not.
+   * @default false
+   * @example true
+   */
+  inline: boolean;
+
+  /**
+   * Controls if the youtube video should be allowed to go fullscreen.
+   * @default true
+   * @example false
+   */
+  allowFullscreen: boolean;
+
+  /**
+   * Controls if the youtube video should autoplay.
+   * @default false
+   * @example true
+   */
+  autoplay: boolean;
+
+  controls: boolean;
+  
+  loop: boolean;
+
+  byline: boolean;
+
+  closedCaptions?: boolean;
+
+  endTime?: number;
+
+  startTime?: number;
+
+  showLogo: boolean;
+
+  responsive: boolean;
+
+  portrait: boolean;
+
+  title: boolean;
+
   /**
    * The width of the youtube video.
-   * @default 640
    * @example 1280
    */
-  width: number;
+  width?: number;
 
   /**
    * The height of the youtube video.
-   * @default 480
    * @example 720
    */
-  height: number;
+  height?: number;
 }
 
 type SetVimeoVideoOptions = { src: string; width?: number; height?: number };
@@ -45,22 +84,40 @@ declare module '@tiptap/core' {
 export const Vimeo = Node.create<VimeoOptions>({
   name: 'vimeo',
 
-  group: 'block',
-
-  draggable: true,
-
   addOptions() {
     return {
       addPasteHandler: true,
       HTMLAttributes: {},
-      width: 640,
-      height: 480,
+      allowFullscreen: true,
+      autoplay: false,
+      closedCaptions: false,
+      controls: true,
+      byline: false,
+      loop: false,
+      showLogo: false,
+      responsive: true,
+      portrait: false,
+      title: false,
+      inline: false,
     };
   },
+
+  inline() {
+    return this.options.inline
+  },
+
+  group() {
+    return this.options.inline ? 'inline' : 'block'
+  },
+
+  draggable: true,
 
   addAttributes() {
     return {
       src: { default: null },
+      start: {
+        default: 0,
+      },      
       width: { default: this.options.width },
       height: { default: this.options.height },
     };
@@ -75,6 +132,7 @@ export const Vimeo = Node.create<VimeoOptions>({
       setVimeoVideo:
         (options: SetVimeoVideoOptions) =>
         ({ commands }) => {
+
           if (!isValidVimeoUrl(options.src)) return false;
 
           return commands.insertContent({
@@ -100,6 +158,18 @@ export const Vimeo = Node.create<VimeoOptions>({
   renderHTML({ HTMLAttributes }) {
     const embedUrl = getEmbedUrlFromVimeoUrl({
       url: HTMLAttributes.src,
+      allowFullscreen: this.options.allowFullscreen,
+      autoplay: this.options.autoplay,
+      controls: this.options.controls,
+      loop: this.options.loop,
+      byline: this.options.byline,
+      closedCaptions: this.options.closedCaptions,
+      endTime: this.options.endTime,
+      startTime: HTMLAttributes.start || 0,
+      showLogo: this.options.showLogo,
+      responsive: this.options.responsive,
+      portrait: this.options.portrait,
+      title: this.options.title,
     });
 
     HTMLAttributes.src = embedUrl;
@@ -108,19 +178,14 @@ export const Vimeo = Node.create<VimeoOptions>({
       'div',
       {
         'data-vimeo-video': '',
-        style: 'padding:56.25% 0 0 0; position:relative;',
       },
       [
         'iframe',
         mergeAttributes(
           this.options.HTMLAttributes,
           {
-            src: embedUrl,
-            frameborder: '0',
             width: this.options.width,
             height: this.options.height,
-            allow: 'autoplay; fullscreen; picture-in-picture; clipboard-write',
-            style: 'position:absolute; top:0; left:0; width:100%; height:100%;',
           },
           HTMLAttributes
         ),
