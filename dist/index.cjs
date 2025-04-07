@@ -10,16 +10,46 @@ const VIMEO_REGEX = /^(https?:\/\/)?(www\.)?(vimeo\.com\/(video\/)?|player\.vime
 const VIMEO_REGEX_GLOBAL = /^(https?:\/\/)?(www\.)?(vimeo\.com\/(video\/)?|player\.vimeo\.com\/video\/)(\d+)(\?.*)?$/g;
 const FACEBOOK_REGEX = /^(https?:\/\/)?(www\.)?facebook\.com\/.+\/(videos|reel)\/\d+/;
 const FACEBOOK_REGEX_GLOBAL = /^(https?:\/\/)?(www\.)?facebook\.com\/.+\/(videos|reel)\/\d+/g;
-const TIKTOK_REGEX = /^(https?:\/\/)?(www\.)?tiktok\.com\/@.+\/video\/\d+/;
-const TIKTOK_REGEX_GLOBAL = /^(https?:\/\/)?(www\.)?tiktok\.com\/@.+\/video\/\d+/g;
+const FACEBOOK_REGEX_PLUGIN_URL = /^(https?:\/\/)?(www\.)?facebook\.com\/plugins\/video\.php/;
+// TikTok URLs can be in the format:
+// https://www.tiktok.com/@username/video/1234567890123456789
+// https://www.tiktok.com/player/v1/1234567890123456789
+const TIKTOK_REGEX = /^(https?:\/\/)?(www\.)?tiktok\.com\/((@[^/]+\/video\/\d+)|(player\/v1\/\d+))/;
+const TIKTOK_REGEX_GLOBAL = /^(https?:\/\/)?(www\.)?tiktok\.com\/((@[^/]+\/video\/\d+)|(player\/v1\/\d+))/g;
 const isValidYoutubeUrl = (url) => {
     return url && url.match(YOUTUBE_REGEX);
 };
 const isValidVimeoUrl = (url) => {
     return url && url.match(VIMEO_REGEX);
 };
+const extractFacebookVideoPluginUrl = (url) => {
+    // Check if the URL is a valid Facebook video plugin URL
+    try {
+        const parsed = new URL(url);
+        // Embedded player URL with valid href param
+        if (parsed.hostname === 'www.facebook.com' &&
+            parsed.pathname === '/plugins/video.php') {
+            const hrefParam = parsed.searchParams.get('href');
+            if (hrefParam) {
+                const decodedHref = decodeURIComponent(hrefParam);
+                return decodedHref.match(FACEBOOK_REGEX) ? decodedHref : null;
+            }
+        }
+        return null;
+    }
+    catch (e) {
+        return null;
+    }
+};
 const isValidFacebookUrl = (url) => {
-    return url && url.match(FACEBOOK_REGEX);
+    //return url && url.match(FACEBOOK_REGEX);
+    if (!url)
+        return false;
+    if (url.match(FACEBOOK_REGEX)) {
+        return true;
+    }
+    const extractedUrl = extractFacebookVideoPluginUrl(url);
+    return extractedUrl !== null;
 };
 const isValidTiktokUrl = (url) => {
     return url && url.match(TIKTOK_REGEX);
@@ -118,7 +148,6 @@ const getEmbedUrlFromVimeoUrl = (options) => {
     const outputUrl = `https://player.vimeo.com/video/${videoId}`;
     const params = [];
     if (!allowFullscreen) {
-        console.log('allowFullscreen', allowFullscreen);
         params.push(`fullscreen=0`);
     }
     if (autoplay) {
@@ -163,9 +192,13 @@ const getEmbedUrlFromFacebookUrl = (options) => {
     const { url, width, height } = options;
     if (!isValidFacebookUrl(url))
         return null;
+    let videoUrl = url;
+    if (videoUrl.match(FACEBOOK_REGEX_PLUGIN_URL)) {
+        videoUrl = extractFacebookVideoPluginUrl(videoUrl);
+    }
     const outputUrl = 'https://www.facebook.com/plugins/video.php';
     const params = [];
-    params.push(`href=${encodeURIComponent(url)}`);
+    params.push(`href=${encodeURIComponent(videoUrl)}`);
     {
         params.push(`show_text=0`);
     }
@@ -184,12 +217,12 @@ const getEmbedUrlFromTiktokUrl = (options) => {
     const { url, allowFullscreen, autoplay, controls, loop, rel, musicInfo, nativeContextMenu, closedCaptions, } = options;
     if (!isValidTiktokUrl(url))
         return null;
-    const videoId = url.split('/video/')[1].split('?')[0];
+    const match = url.match(/^(?:https?:\/\/)?(?:www\.)?tiktok\.com\/(?:@[^/]+\/video\/|player\/v1\/)(\d+)/);
+    const videoId = match ? match[1] : null;
     if (!videoId)
         return null;
     const outputUrl = `https://www.tiktok.com/player/v1/${videoId}`;
     const params = [];
-    params.push(`url=${encodeURIComponent(url)}`);
     if (autoplay) {
         params.push(`autoplay=1`);
     }

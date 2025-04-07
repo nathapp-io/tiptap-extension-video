@@ -55,5 +55,5 @@
   },
   "overrides": {
     "@rollup/pluginutils": "^5.1.4"
-  }  
+  }
 }

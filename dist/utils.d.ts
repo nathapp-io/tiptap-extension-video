@@ -4,11 +4,13 @@ export declare const VIMEO_REGEX: RegExp;
 export declare const VIMEO_REGEX_GLOBAL: RegExp;
 export declare const FACEBOOK_REGEX: RegExp;
 export declare const FACEBOOK_REGEX_GLOBAL: RegExp;
+export declare const FACEBOOK_REGEX_PLUGIN_URL: RegExp;
 export declare const TIKTOK_REGEX: RegExp;
 export declare const TIKTOK_REGEX_GLOBAL: RegExp;
 export declare const isValidYoutubeUrl: (url: string) => RegExpMatchArray;
 export declare const isValidVimeoUrl: (url: string) => RegExpMatchArray;
-export declare const isValidFacebookUrl: (url: string) => RegExpMatchArray;
+export declare const extractFacebookVideoPluginUrl: (url: string) => string;
+export declare const isValidFacebookUrl: (url: string) => boolean;
 export declare const isValidTiktokUrl: (url: string) => RegExpMatchArray;
 export interface GetEmbedUrlOptions {
     url: string;
