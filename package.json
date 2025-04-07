@@ -1,7 +1,7 @@
 {
   "name": "@nathapp/tiptap-extension-video",
   "description": "a video embed extension for tiptap",
-  "version": "1.0.0",
+  "version": "1.0.1-rc.0",
   "keywords": [
     "tiptap",
     "tiptap extension",

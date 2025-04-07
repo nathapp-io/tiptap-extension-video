@@ -90,10 +90,6 @@ declare module '@tiptap/core' {
 export const Tiktok = Node.create<TiktokOptions>({
   name: 'tiktok',
 
-  group: 'block',
-
-  draggable: true,
-
   addOptions() {
     return {
       addPasteHandler: true,
@@ -110,16 +106,36 @@ export const Tiktok = Node.create<TiktokOptions>({
     };
   },
 
+  inline() {
+    return this.options.inline
+  },
+
+  group() {
+    return this.options.inline ? 'inline' : 'block'
+  },
+
+  draggable: true,
+
   addAttributes() {
     return {
-      src: { default: null },
-      width: { default: this.options.width },
-      height: { default: this.options.height },
+      src: {
+        default: null,
+      },
+      width: {
+        default: null,
+      },
+      height: {
+        default: null,
+      },
     };
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-tiktok-video] iframe' }];
+    return [
+      {
+        tag: 'div[data-tiktok-video] iframe',
+      },
+    ]
   },
 
   addCommands() {

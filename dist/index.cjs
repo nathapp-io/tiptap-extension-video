@@ -458,8 +458,6 @@ const Vimeo = core.Node.create({
 
 const Tiktok = core.Node.create({
     name: 'tiktok',
-    group: 'block',
-    draggable: true,
     addOptions() {
         return {
             addPasteHandler: true,
@@ -475,15 +473,32 @@ const Tiktok = core.Node.create({
             inline: false,
         };
     },
+    inline() {
+        return this.options.inline;
+    },
+    group() {
+        return this.options.inline ? 'inline' : 'block';
+    },
+    draggable: true,
     addAttributes() {
         return {
-            src: { default: null },
-            width: { default: this.options.width },
-            height: { default: this.options.height },
+            src: {
+                default: null,
+            },
+            width: {
+                default: null,
+            },
+            height: {
+                default: null,
+            },
         };
     },
     parseHTML() {
-        return [{ tag: 'div[data-tiktok-video] iframe' }];
+        return [
+            {
+                tag: 'div[data-tiktok-video] iframe',
+            },
+        ];
     },
     addCommands() {
         return {
@@ -548,12 +563,12 @@ const Tiktok = core.Node.create({
 
 const Facebook = core.Node.create({
     name: 'facebook',
-    group: 'block',
-    draggable: true,
     addOptions() {
         return {
             allowFullscreen: true,
             addPasteHandler: true,
+            autoplay: false,
+            loop: false,
             HTMLAttributes: {},
             width: 640,
             height: 480,
@@ -561,6 +576,13 @@ const Facebook = core.Node.create({
             inline: false,
         };
     },
+    inline() {
+        return this.options.inline;
+    },
+    group() {
+        return this.options.inline ? 'inline' : 'block';
+    },
+    draggable: true,
     addAttributes() {
         return {
             src: { default: null },
@@ -569,7 +591,11 @@ const Facebook = core.Node.create({
         };
     },
     parseHTML() {
-        return [{ tag: 'div[data-facebook-video] iframe' }];
+        return [
+            {
+                tag: 'div[data-facebook-video] iframe',
+            },
+        ];
     },
     addCommands() {
         return {
@@ -608,6 +634,11 @@ const Facebook = core.Node.create({
             [
                 'iframe',
                 core.mergeAttributes(this.options.HTMLAttributes, {
+                    width: this.options.width,
+                    height: this.options.height,
+                    allowfullscreen: this.options.allowFullscreen,
+                    autoplay: this.options.autoplay,
+                    loop: this.options.loop,
                     src: embedUrl,
                 }, HTMLAttributes),
             ],

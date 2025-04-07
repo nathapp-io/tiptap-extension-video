@@ -17,6 +17,20 @@ export interface FacebookOptions {
    */
   allowFullscreen: boolean;
 
+   /**
+   * Controls if the youtube video should autoplay.
+   * @default false
+   * @example true
+   */
+    autoplay: boolean;
+
+  /**
+   * Controls if the youtube video should loop.
+   * @default false
+   * @example true
+   */
+  loop: boolean;    
+
   /**
    * The HTML attributes for a youtube video node.
    * @default {}
@@ -61,14 +75,12 @@ declare module '@tiptap/core' {
 export const Facebook = Node.create<FacebookOptions>({
   name: 'facebook',
 
-  group: 'block',
-
-  draggable: true,
-
   addOptions() {
     return {
       allowFullscreen: true,
       addPasteHandler: true,
+      autoplay: false,
+      loop: false,
       HTMLAttributes: {},
       width: 640,
       height: 480,
@@ -76,6 +88,16 @@ export const Facebook = Node.create<FacebookOptions>({
       inline: false,
     };
   },
+
+  inline() {
+    return this.options.inline
+  },
+
+  group() {
+    return this.options.inline ? 'inline' : 'block'
+  },
+
+  draggable: true,
 
   addAttributes() {
     return {
@@ -86,7 +108,11 @@ export const Facebook = Node.create<FacebookOptions>({
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-facebook-video] iframe' }];
+    return [
+      {
+        tag: 'div[data-facebook-video] iframe',
+      },
+    ]
   },
 
   addCommands() {
@@ -136,6 +162,11 @@ export const Facebook = Node.create<FacebookOptions>({
         mergeAttributes(
           this.options.HTMLAttributes,
           {
+            width: this.options.width,
+            height: this.options.height,
+            allowfullscreen: this.options.allowFullscreen,
+            autoplay: this.options.autoplay,
+            loop: this.options.loop,            
             src: embedUrl,
           },
           HTMLAttributes

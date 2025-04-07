@@ -13,6 +13,18 @@ export interface FacebookOptions {
      */
     allowFullscreen: boolean;
     /**
+    * Controls if the youtube video should autoplay.
+    * @default false
+    * @example true
+    */
+    autoplay: boolean;
+    /**
+     * Controls if the youtube video should loop.
+     * @default false
+     * @example true
+     */
+    loop: boolean;
+    /**
      * The HTML attributes for a youtube video node.
      * @default {}
      * @example { class: 'foo' }
